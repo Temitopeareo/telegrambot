@@ -3,7 +3,7 @@ const fs = require("fs").promises;
 const axios = require("axios");
 
 // Replace with your bot token (use environment variables for production)
-const botToken = "REMOVED FOR SECURITY REASONS";
+const botToken = "8197031252:AAHCWf8rK-dIoWMVogSDco3zBvJ1U4S4kRk";
 const apiUrl = `https://api.telegram.org/bot${botToken}`;
 const bot = new TelegramBot(botToken, { polling: true });
 
