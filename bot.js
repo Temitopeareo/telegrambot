@@ -9,7 +9,7 @@ const app = express()
 app.use(express.json())
 
 // Replace with your bot token (use environment variables for production)
-const botToken = process.env.TELEGRAM_BOT_TOKEN || "8197031252:AAHCWf8rK-dIoWMVogSDco3zBvJ1U4S4kRk"
+const botToken = "8197031252:AAFCtwg6sutYG3MbQX1DcEZ_4joLtGF0TPg"
 const apiUrl = `https://api.telegram.org/bot${botToken}`
 
 // Web app URL - replace with your actual deployed URL
