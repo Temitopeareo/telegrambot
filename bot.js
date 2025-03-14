@@ -9,7 +9,7 @@ const app = express()
 app.use(express.json())
 
 // Replace with your bot token (use environment variables for production)
-const botToken = process.env.TELEGRAM_BOT_TOKEN || ""
+const botToken = process.env.TELEGRAM_BOT_TOKEN || "8197031252:AAFCtwg6sutYG3MbQX1DcEZ_4joLtGF0TPg"
 const apiUrl = `https://api.telegram.org/bot${botToken}`
 
 // Web app URL - replace with your actual deployed URL
@@ -759,8 +759,8 @@ async function handleUpdate(update) {
 
 // Setup webhook
 async function setupWebhook() {
-  const webhookUrl = process.env.WEBHOOK_URL || ""
-  const botToken = process.env.TELEGRAM_BOT_TOKEN || ""
+  const webhookUrl = process.env.WEBHOOK_URL || "https://telegrambot-blue.vercel.app"
+  const botToken = process.env.TELEGRAM_BOT_TOKEN || "8197031252:AAFCtwg6sutYG3MbQX1DcEZ_4joLtGF0TPg"
 
   if (!webhookUrl) {
     console.error("WEBHOOK_URL environment variable is not set")
@@ -826,8 +826,8 @@ app.post("/api/webhook", async (req, res) => {
 // Add this near your other Express routes
 app.get("/api/debug", async (req, res) => {
   try {
-    const botToken = process.env.TELEGRAM_BOT_TOKEN || ""
-    const webhookUrl = process.env.WEBHOOK_URL || ""
+    const botToken = process.env.TELEGRAM_BOT_TOKEN || "8197031252:AAFCtwg6sutYG3MbQX1DcEZ_4joLtGF0TPg"
+    const webhookUrl = process.env.WEBHOOK_URL || "https://telegrambot-blue.vercel.app"
 
     if (!botToken) {
       return res.status(500).json({ error: "TELEGRAM_BOT_TOKEN not set" })
