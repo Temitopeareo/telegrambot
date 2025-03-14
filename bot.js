@@ -9,7 +9,7 @@ const app = express()
 app.use(express.json())
 
 // Replace with your bot token (use environment variables for production)
-const botToken = "8197031252:AAFCtwg6sutYG3MbQX1DcEZ_4joLtGF0TPg"
+const botToken = process.env.TELEGRAM_BOT_TOKEN || ""
 const apiUrl = `https://api.telegram.org/bot${botToken}`
 
 // Web app URL - replace with your actual deployed URL
@@ -760,20 +760,33 @@ async function handleUpdate(update) {
 // Setup webhook
 async function setupWebhook() {
   const webhookUrl = process.env.WEBHOOK_URL || ""
+  const botToken = process.env.TELEGRAM_BOT_TOKEN || ""
 
   if (!webhookUrl) {
     console.error("WEBHOOK_URL environment variable is not set")
     return false
   }
 
+  if (!botToken) {
+    console.error("TELEGRAM_BOT_TOKEN environment variable is not set")
+    return false
+  }
+
   try {
+    // First, delete any existing webhook
+    await axios.get(`${apiUrl}/deleteWebhook`)
+
+    // Then set the new webhook
+    const webhookEndpoint = `${webhookUrl}/api/webhook`
+    console.log(`Setting webhook to: ${webhookEndpoint}`)
+
     const response = await axios.post(`${apiUrl}/setWebhook`, {
-      url: `${webhookUrl}/api/webhook`,
+      url: webhookEndpoint,
       allowed_updates: ["message", "callback_query"],
     })
 
-    console.log("Webhook set up successfully:", response.data)
-    return true
+    console.log("Webhook set up response:", response.data)
+    return response.data.ok
   } catch (error) {
     console.error("Error setting up webhook:", error.response?.data || error.message)
     return false
@@ -807,6 +820,39 @@ app.post("/api/webhook", async (req, res) => {
   } catch (error) {
     console.error("Error in webhook handler:", error)
     res.status(500).send("Internal Server Error")
+  }
+})
+
+// Add this near your other Express routes
+app.get("/api/debug", async (req, res) => {
+  try {
+    const botToken = process.env.TELEGRAM_BOT_TOKEN || ""
+    const webhookUrl = process.env.WEBHOOK_URL || ""
+
+    if (!botToken) {
+      return res.status(500).json({ error: "TELEGRAM_BOT_TOKEN not set" })
+    }
+
+    // Get webhook info
+    const webhookInfo = await axios.get(`https://api.telegram.org/bot${botToken}/getWebhookInfo`)
+
+    // Get bot info
+    const botInfo = await axios.get(`https://api.telegram.org/bot${botToken}/getMe`)
+
+    res.status(200).json({
+      bot: botInfo.data,
+      webhook: webhookInfo.data,
+      environment: {
+        webhookUrl: webhookUrl,
+        nodeEnv: process.env.NODE_ENV,
+        vercelEnv: process.env.VERCEL_ENV,
+      },
+    })
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+      response: error.response?.data,
+    })
   }
 })
 
